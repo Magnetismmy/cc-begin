@@ -1,0 +1,146 @@
+let path = require("path");
+let lzstring = require("lzstring.ts").LZString;
+
+let parseMap = {};
+function registTypeParse(type,outType,valuefun){
+    let funs = {valuefun:valuefun,outType:outType};
+    if(Array.isArray(type)){
+        type.forEach(v=>parseMap[v] = funs);
+    }else{
+        parseMap[type] = funs;
+    }
+}
+
+function registDefaultParse(){
+    registTypeParse(["number","int","long"],"number",(value)=>{
+        return +value || 0;
+    });
+
+    registTypeParse(["string","String","text","Text"],"string",(value)=>{
+        return value+"";
+    });
+
+    registTypeParse(["bool","boolean"],"boolean",(value)=>{
+        return value.toLowerCase()=="true";
+    });
+
+    registTypeParse(["json","object"],"any",(value)=>{
+        let val = value.toString();
+        try{
+            val = JSON.parse(val)
+        }catch(e){
+            console.log("Warning:wrong json value:",e);
+        }
+
+        return val;
+    });
+}
+
+registDefaultParse();
+
+function adjustKeyAndValue(keys, values) {
+    for (let i = keys.length - 1; i >= 0; i--) {
+        if (keys[i].type == "null") {
+            keys.splice(i, 1);
+            values.forEach(v => v.splice(i, 1))
+        }
+    }
+
+    keys.forEach(v => {
+        let parser = parseMap[v.type];
+        if(!parser){
+            console.log("unknow type:",v.type);
+        }else{
+            v.type = parser.outType;
+        }
+    })
+
+    values.forEach((arr) => {
+        arr.forEach((v, index) => {
+            let parser = parseMap[keys[index].type];
+            let value = v;
+            if(parser){
+                value = parser.valuefun(v);
+            }
+            arr[index] = value;
+        });
+    });
+}
+
+function generate(name, keys, values) {
+    let primary_key = keys[0].key;
+    let primary_Type = keys[0].type;
+    let primary_key_c = primary_key[0].toUpperCase() + primary_key.substr(1);
+    // let data_key = Buffer.from(JSON.stringify(keys)).toString("base64");
+    // let data_datas = Buffer.from(JSON.stringify(values)).toString("base64");
+
+    let data_key = lzstring.compressToBase64(JSON.stringify(keys.map(v => v.key)));
+    let data_datas = lzstring.compressToBase64(JSON.stringify(values));
+
+    // compressToBase64
+    // Buffer.from("Hello World").toString('base64'));
+    // Buffer.from("SGVsbG8gV29ybGQ=", 'base64').toString('ascii'))
+
+    var date = new Date();
+    var Y = date.getFullYear();
+    var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1);
+    var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+    var hh = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
+    var mm = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+    var ss = date.getSeconds() < 10 ? '0' + date.getDate() : date.getSeconds();
+    let time = Y + '-' + M + '-' + D +'  ' + hh + ':' + mm + ':' + ss;
+
+    let format = `
+//【Notice】 auto generated ${time}。 @terran 
+declare global {
+    interface I${name} {
+${keys.map((v, index) => `\t\treadonly ${v.key}: ${v.type}; //${v.des}`).join("\n")}
+    }
+}
+
+export namespace ${name} {
+    export function getBy${primary_key_c}(${primary_key}: ${primary_Type}): I${name} { return getDB().get(id); }
+    export function getall(): I${name}[] { return getDB().getall(); }
+    /*
+    [
+${values.map(v=>"\t\t"+JSON.stringify(v)).join("\n")}
+    ]
+    */
+    let _db: ig.DB<I${name}>;
+    function getDB(): ig.DB<I${name}> {
+        if (!_db) {
+            let _keys = '${data_key}';
+            let _datas = '${data_datas}';
+            _db = new ig.DB(_keys, _datas, "${primary_key}");
+        }
+        return _db;
+    } 
+}`;
+    return format;
+}
+
+
+// parameter:{name, data}[]
+//  name: sring
+//  data: {keys:{key:string,type:string,des:string}[],values:any[][]}
+// return string;
+exports.parse = arr => {
+    if (arr.length == 1) {
+        let item = arr[0];
+        let name = path.basename(item.name, ".xlsx")
+        adjustKeyAndValue(item.data.keys, item.data.values);
+        return generate(name, item.data.keys, item.data.values);
+    } else {
+        let map = {};
+        for (let item of arr) {
+            let name = path.basename(item.name, ".xlsx").replace("DB_", "");
+            adjustKeyAndValue(item.data.keys, item.data.values);
+            map[name] = {
+                keys: item.data.keys.map(v => v.key),
+                data: item.data.values
+            };
+        }
+
+        return JSON.stringify(map);
+    }
+}

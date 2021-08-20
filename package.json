@@ -1,0 +1,15 @@
+{
+  "name": "cc-begin",
+  "type": "3d",
+  "uuid": "57a6a229-4c01-4a10-a425-73164f911bd1",
+  "version": "3.1.2",
+  "creator": {
+    "version": "3.1.2"
+  },
+  "dependencies": {
+    "ig_core": "http://fay.capjoy.com/library_dist/ig_core-2.0.111.tgz"
+  },
+  "devDependencies": {
+    "lzstring.ts": "^2.0.1"
+  }
+}

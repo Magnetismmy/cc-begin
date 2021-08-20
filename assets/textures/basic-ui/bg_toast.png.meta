@@ -1,0 +1,74 @@
+{
+  "ver": "1.0.21",
+  "importer": "image",
+  "imported": true,
+  "uuid": "8273b331-ed57-435c-8d39-ec2f6d7be490",
+  "files": [
+    ".png",
+    ".json"
+  ],
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "8273b331-ed57-435c-8d39-ec2f6d7be490@6c48a",
+      "displayName": "bg_toast",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "8273b331-ed57-435c-8d39-ec2f6d7be490"
+      },
+      "ver": "1.0.21",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f9941": {
+      "importer": "sprite-frame",
+      "uuid": "8273b331-ed57-435c-8d39-ec2f6d7be490@f9941",
+      "displayName": "bg_toast",
+      "id": "f9941",
+      "name": "spriteFrame",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 0,
+        "trimY": 0,
+        "width": 232,
+        "height": 65,
+        "rawWidth": 232,
+        "rawHeight": 65,
+        "borderTop": 12,
+        "borderBottom": 12,
+        "borderLeft": 90,
+        "borderRight": 90,
+        "packable": true,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "8273b331-ed57-435c-8d39-ec2f6d7be490@6c48a",
+        "atlasUuid": ""
+      },
+      "ver": "1.0.9",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "hasAlpha": true,
+    "type": "sprite-frame",
+    "redirect": "8273b331-ed57-435c-8d39-ec2f6d7be490@f9941"
+  }
+}
