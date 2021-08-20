@@ -34,6 +34,10 @@ export class HomeView extends Component {
     clickCapture(){
         stage.capture(this.list.node);
     }
+
+    clickSound(){
+        coreEvent.emit('sound');
+    }
 }
 
 /**

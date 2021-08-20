@@ -7,6 +7,8 @@
     "version": "3.1.2"
   },
   "dependencies": {
+    "@types/howler": "^2.2.3",
+    "howler": "^2.2.3",
     "ig_core": "http://fay.capjoy.com/library_dist/ig_core-2.0.111.tgz"
   },
   "devDependencies": {

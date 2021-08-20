@@ -11,6 +11,8 @@ import { StatePlay } from "./state/states/StatePlay";
 import { StateResult } from "./state/states/StateResult";
 import { StateFail } from "./state/states/StateFail";
 
+// import * as HL from "howler";
+
 
 declare global{
     // var controller:GameController;
@@ -70,6 +72,7 @@ export class GameController extends Component{
 
     onStart(){
         this.ui = director.getScene().getComponentInChildren(UIManager);
+        audioManager.init();
         // let c = this.ui.getComponent(Canvas);
         // c.cameraComponent = stage.getComponentInChildren(Camera);
         this.setState(GameStateEnum.home);
